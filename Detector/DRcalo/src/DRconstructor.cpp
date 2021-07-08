@@ -186,7 +186,7 @@ void ddDRcalo::DRconstructor::implementFiber(dd4hep::Volume& towerVol, dd4hep::T
   // punch air hole
   if ( pos.z() > 0. ) {
     dd4hep::Tube airHoleTube = dd4hep::Tube(0.,fX_cladC.rmax(),pos.z());
-    dd4hep::Position airPos( pos.x(), pos.y(), -fiber.access().GetDz() );
+    dd4hep::Position airPos( pos.x(), pos.y(), -fiber.access()->GetDz() );
     dd4hep::IntersectionSolid airHole = dd4hep::IntersectionSolid(trap,airHoleTube,airPos);
     dd4hep::Volume airHoleVol("airHole", airHole, fDescription->material(fX_hole.materialStr()));
     towerVol.placeVolume(airHoleVol, fiberId32);
