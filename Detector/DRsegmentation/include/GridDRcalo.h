@@ -19,6 +19,9 @@ public:
 
   //  Determine the global(local) position based on the cell ID.
   virtual Vector3D position(const CellID& aCellID) const;
+  virtual Vector3D towerposition(int noEta, int noPhi) const;
+  virtual Vector3D towerposition_from_cell_ID(const CellID& cID) const;
+  virtual double towerheight_from_cell_ID(const CellID& cID) const;
   Vector3D localPosition(const CellID& aCellID) const;
   Vector3D localPosition(int numx, int numy, int x_, int y_) const;
 
@@ -86,8 +89,6 @@ public:
   DRparamBarrel* paramBarrel() { return fParamBarrel; }
   DRparamEndcap* paramEndcap() { return fParamEndcap; }
 
-  DRparamBase* setParamBase(int noEta) const;
-
 protected:
   std::string fNumEtaId;
   std::string fNumPhiId;
@@ -100,6 +101,8 @@ protected:
   double fSipmSize;
 
 private:
+  DRparamBase* setParamBase(int noEta) const;
+
   DRparamBarrel* fParamBarrel;
   DRparamEndcap* fParamEndcap;
 };

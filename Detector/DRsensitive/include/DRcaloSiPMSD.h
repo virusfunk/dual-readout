@@ -2,6 +2,7 @@
 #define DRcaloSiPMSD_h 1
 
 #include "DRcaloSiPMHit.h"
+#include "DRsimInterface.h"
 #include "GridDRcalo.h"
 #include "DD4hep/Segmentations.h"
 
@@ -11,7 +12,7 @@
 #include "G4Step.hh"
 #include "G4TouchableHistory.hh"
 
-namespace drc {
+namespace ddDRcalo {
   class DRcaloSiPMSD : public G4VSensitiveDetector {
   public:
     DRcaloSiPMSD(const std::string aName, const std::string aReadoutName, const dd4hep::Segmentation& aSeg);
@@ -36,8 +37,8 @@ namespace drc {
 
     G4double wavToE(G4double wav) { return h_Planck*c_light/wav; }
 
-    float findWavCenter(G4double en);
-    float findTimeCenter(G4double stepTime);
+    DRsimInterface::hitRange findWavRange(G4double en);
+    DRsimInterface::hitRange findTimeRange(G4double stepTime);
   };
 }
 

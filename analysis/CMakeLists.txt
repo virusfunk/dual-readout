@@ -1,31 +1,72 @@
 project(analysis)
 
-file(GLOB sources
-  ${PROJECT_SOURCE_DIR}/src/*.cpp
-)
+find_package(ROOT REQUIRED)
+find_package(HepMC3)
 
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${FASTJET_DIR}/include
+  ${HEPMC_DIR}/include
+)
+file(GLOB sources
+  ${PROJECT_SOURCE_DIR}/src/*.cc
+)
 file(GLOB headers
   ${PROJECT_SOURCE_DIR}/include/*.h
 )
 
-add_executable(analysis analysis.cpp ${sources} ${headers})
-
+include(${ROOT_USE_FILE})
+add_executable(analysis analysis.cc ${sources} ${headers})
+add_executable(produce_rootfiles_for_CNN_clusters_images_256x256 produce_rootfiles_for_CNN_clusters_images_256x256.cc ${sources} ${headers})
+#add_executable(JER JER.cc ${sources} ${headers})
+#add_executable(calib calib.cc ${sources} ${headers})
 target_link_libraries(
   analysis
+  ${HEPMC3_LIBRARIES}
+  rootIO
   ${ROOT_LIBRARIES}
-  podio::podioRootIO
-  edm4dr
-  edm4dr::edm4drDict
+  ${CMAKE_DL_LIBS}
+  DetComponents
+  ddDRsegmentation
+)
+target_link_libraries(
+  produce_rootfiles_for_CNN_clusters_images_256x256
+  ${HEPMC3_LIBRARIES}
+  rootIO
+  ${ROOT_LIBRARIES}
+  ${CMAKE_DL_LIBS}
+  DetComponents
+  ddDRsegmentation
 )
 
-target_include_directories(analysis PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
+
+#target_link_libraries(
+#  JER
+#  ${HEPMC_DIR}/lib64/libHepMC3.so
+#  ${HEPMC_DIR}/lib64/libHepMC3rootIO.so
+#  rootIO
+#  ${ROOT_LIBRARIES}
+#  ${CMAKE_DL_LIBS}
+#)
+#target_link_libraries(
+#  calib
+#  ${HEPMC_DIR}/lib64/libHepMC3.so
+#  ${HEPMC_DIR}/lib64/libHepMC3rootIO.so
+#  rootIO
+#  ${ROOT_LIBRARIES}
+#  ${CMAKE_DL_LIBS}
+#)
+
+set(
+  analysis_SCRIPTS
 )
 
-set_target_properties(analysis PROPERTIES PUBLIC_HEADER "${headers}")
+foreach(_script ${analysis_SCRIPTS})
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/${_script}
+    ${PROJECT_BINARY_DIR}/${_script}
+    COPYONLY
+  )
+endforeach()
 
-install(TARGETS analysis EXPORT analysisTargets
-  RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT bin
-  PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" COMPONENT dev
-)
+install(TARGETS analysis produce_rootfiles_for_CNN_clusters_images_256x256 DESTINATION bin) # JER calib

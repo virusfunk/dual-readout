@@ -36,6 +36,8 @@ namespace DDSegmentation {
     double GetBl2sipm() { return fV4sipm.X()*std::tan(fPhiZRot/2.); }
     double GetTl2sipm() { return fV2sipm.X()*std::tan(fPhiZRot/2.); }
 
+    double GetTowerH() { return fTowerH; }
+
     dd4hep::RotationZYX GetRotationZYX(int numPhi);
     dd4hep::Position GetTowerPos(int numPhi);
     dd4hep::Position GetAssemblePos(int numPhi);
@@ -54,9 +56,6 @@ namespace DDSegmentation {
 
     int GetTotTowerNum() { return fTotNum; }
     void SetTotTowerNum(int totNum) { fTotNum = totNum; }
-
-    int GetCurrentTowerNum() { return fCurrentTowerNum; }
-    void SetCurrentTowerNum(int numEta) { fCurrentTowerNum = numEta; }
 
     virtual void init() {};
     void filled() { fFilled = true; }
@@ -86,7 +85,6 @@ namespace DDSegmentation {
     double fCurrentOuterHalfSipm;
 
     int fTotNum;
-    int fCurrentTowerNum;
     std::vector<double> fDeltaThetaVec;
     std::vector<double> fThetaOfCenterVec;
     bool fFilled;

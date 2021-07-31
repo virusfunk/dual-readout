@@ -67,6 +67,66 @@ Vector3D GridDRcalo::position(const CellID& cID) const {
   return Vector3D(translation.x(),translation.y(),translation.z());
 }
 
+Vector3D GridDRcalo::towerposition(int noEta, int noPhi) const {
+  DRparamBase* paramBase = nullptr;
+
+  if ( fParamEndcap->unsignedTowerNo(noEta) >= fParamBarrel->GetTotTowerNum() ) paramBase = fParamEndcap;
+  else paramBase = fParamBarrel;
+
+  // This should not be called while building detector geometry
+  if (!paramBase->IsFinalized()) throw std::runtime_error("GridDRcalo::position should not be called while building detector geometry!");
+
+  paramBase->SetDeltaThetaByTowerNo(noEta, fParamBarrel->GetTotTowerNum());
+  paramBase->SetThetaOfCenterByTowerNo(noEta, fParamBarrel->GetTotTowerNum());
+  paramBase->SetIsRHSByTowerNo(noEta);
+  paramBase->init();
+
+  return paramBase->GetTowerPos(noPhi);
+}
+
+Vector3D GridDRcalo::towerposition_from_cell_ID(const CellID& cID) const { // cm
+    int noEta = numEta(cID);
+    int noPhi = numPhi(cID);
+
+    DRparamBase* paramBase = nullptr;
+
+    if (fParamEndcap->unsignedTowerNo(noEta) >= fParamBarrel->GetTotTowerNum()) paramBase = fParamEndcap;
+    else paramBase = fParamBarrel;
+
+    // This should not be called while building detector geometry
+    if (!paramBase->IsFinalized()) throw std::runtime_error("GridDRcalo::position should not be called while building detector geometry!");
+
+    paramBase->SetDeltaThetaByTowerNo(noEta, fParamBarrel->GetTotTowerNum());
+    paramBase->SetThetaOfCenterByTowerNo(noEta, fParamBarrel->GetTotTowerNum());
+    paramBase->SetIsRHSByTowerNo(noEta);
+    paramBase->init();
+
+    return paramBase->GetTowerPos(noPhi);
+
+}
+
+double GridDRcalo::towerheight_from_cell_ID(const CellID& cID) const { // cm
+    int noEta = numEta(cID);
+    int noPhi = numPhi(cID);
+
+    DRparamBase* paramBase = nullptr;
+
+    if (fParamEndcap->unsignedTowerNo(noEta) >= fParamBarrel->GetTotTowerNum()) paramBase = fParamEndcap;
+    else paramBase = fParamBarrel;
+
+    // This should not be called while building detector geometry
+    if (!paramBase->IsFinalized()) throw std::runtime_error("GridDRcalo::position should not be called while building detector geometry!");
+
+    paramBase->SetDeltaThetaByTowerNo(noEta, fParamBarrel->GetTotTowerNum());
+    paramBase->SetThetaOfCenterByTowerNo(noEta, fParamBarrel->GetTotTowerNum());
+    paramBase->SetIsRHSByTowerNo(noEta);
+    paramBase->init();
+
+    return paramBase->GetTowerH();
+
+}
+
+
 Vector3D GridDRcalo::localPosition(const CellID& cID) const {
   int numx = numX(cID);
   int numy = numY(cID);
@@ -211,10 +271,8 @@ CellID GridDRcalo::convertLast32to64(const int aId32) const {
 DRparamBase* GridDRcalo::setParamBase(int noEta) const {
   DRparamBase* paramBase = nullptr;
 
-  if ( fParamEndcap->unsignedTowerNo(noEta) >= fParamBarrel->GetTotTowerNum() ) paramBase = static_cast<DRparamBase*>(fParamEndcap);
-  else paramBase = static_cast<DRparamBase*>(fParamBarrel);
-
-  if ( paramBase->GetCurrentTowerNum()==noEta ) return paramBase;
+  if ( fParamEndcap->unsignedTowerNo(noEta) >= fParamBarrel->GetTotTowerNum() ) paramBase = fParamEndcap;
+  else paramBase = fParamBarrel;
 
   // This should not be called while building detector geometry
   if (!paramBase->IsFinalized()) throw std::runtime_error("GridDRcalo::position should not be called while building detector geometry!");
@@ -222,7 +280,6 @@ DRparamBase* GridDRcalo::setParamBase(int noEta) const {
   paramBase->SetDeltaThetaByTowerNo(noEta, fParamBarrel->GetTotTowerNum());
   paramBase->SetThetaOfCenterByTowerNo(noEta, fParamBarrel->GetTotTowerNum());
   paramBase->SetIsRHSByTowerNo(noEta);
-  paramBase->SetCurrentTowerNum(noEta);
   paramBase->init();
 
   return paramBase;

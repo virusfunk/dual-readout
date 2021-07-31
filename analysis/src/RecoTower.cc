@@ -88,8 +88,8 @@ int RecoTower::getAbsITheta(const int iTheta) {
 }
 
 float RecoTower::E_DR(float E_C, float E_S) {
-  float hOe_C = 0.2484; float hOe_S = 0.8342;
-  float chi = (1.-hOe_S)/(1.-hOe_C);
+  // float hOe_C = 0.2484; float hOe_S = 0.8342;
+  float chi = 0.291;
 
   return (E_S - chi*E_C)/(1 - chi);
 }
